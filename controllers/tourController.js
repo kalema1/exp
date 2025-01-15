@@ -1,4 +1,5 @@
 const Tour = require("./../models/tourModel");
+const APIFeatures = require("../utils/apiFeatures");
 
 // create a check body middleware
 // check if body contains the price and name properties
@@ -30,7 +31,7 @@ exports.aliasTopFiveTours = (req, res, next) => {
 exports.getAllTours = async (req, res) => {
   try {
     // BUILD QUERY
-    // 1B) FILTERING
+    /* // 1B) FILTERING
     // create a copy of query object
     const queryObj = { ...req.query };
     const excludedFields = ["page", "sort", "limit", "fields"];
@@ -42,26 +43,27 @@ exports.getAllTours = async (req, res) => {
     console.log(JSON.parse(queryStr));
 
     let query = Tour.find(JSON.parse(queryStr));
+     */
 
     // 2) Sorting
-    if (req.query.sort) {
+    /* if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
     } else {
       query = query.sort({ createdAt: "asc" });
-    }
+    } */
 
     //3) Field limiting
-    if (req.query.fields) {
+    /* if (req.query.fields) {
       const fields = req.query.fields.split(",").join(" ");
       console.log("FIELDS", fields);
       query = query.select(fields);
     } else {
       query = query.select("-__v");
-    }
+    } */
 
     //4. Pagination
-    const page = req.query.page * 1 || 1;
+    /* const page = req.query.page * 1 || 1;
 
     const limit = req.query.limit * 1 || 100;
 
@@ -69,15 +71,16 @@ exports.getAllTours = async (req, res) => {
 
     // page=3&limit=10,1-10 page 1 11-20 page 2, 21-30 page 3
 
-    query = query.skip(skip).limit(limit);
+    query = query.skip(skip).limit(limit); */
 
     //Execute query
-    const tours = await query;
-    /* const tours = await Tour.find()
-      .where("duration")
-      .equals(5)
-      .where("difficulty")
-      .equals("easy"); */
+    const features = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const tours = await features.query;
 
     res.status(200).json({
       status: "success",
