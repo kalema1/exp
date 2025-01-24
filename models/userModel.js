@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is Required"],
       minlength: 8,
+      select: false,
     },
     passwordConfirm: {
       type: String,
@@ -50,6 +51,13 @@ userSchema.pre("save", async function (next) {
 
   this.passwordConfirm = undefined; // delete the passwordConfirm data
 });
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 //create User model from the user schema
 const User = mongoose.model("User", userSchema);
