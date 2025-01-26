@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema(
         message: "Passwords are NOT the same!",
       },
     },
+    passwordChangedAt: Date,
     photo: {
       type: String,
     },
@@ -57,6 +58,19 @@ userSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changesPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
+
+    return JWTTimestamp < changedTimeStamp;
+  }
+
+  return false;
 };
 
 //create User model from the user schema
