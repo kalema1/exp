@@ -160,7 +160,17 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
+
   // 2) if token has not expired and there is user, set password
+  if (!user) {
+    return next(new AppError("oken is invalid or has expired", 400));
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  await user.save();
   // 3)update the changePasswordAt property for the user
   // 4) log the user in and send JWT
 });
