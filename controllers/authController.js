@@ -163,7 +163,7 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   // 2) if token has not expired and there is user, set password
   if (!user) {
-    return next(new AppError("oken is invalid or has expired", 400));
+    return next(new AppError("Token is invalid or has expired", 400));
   }
 
   user.password = req.body.password;
@@ -171,6 +171,13 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetToken = undefined;
   user.passwordResetExpires = undefined;
   await user.save();
+
   // 3)update the changePasswordAt property for the user
   // 4) log the user in and send JWT
+  const token = signToken(user._id);
+
+  res.status(200).json({
+    status: "success",
+    token,
+  });
 });
