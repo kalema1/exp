@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
@@ -10,6 +11,10 @@ const userRouter = require("./routes/userRoutes");
 const app = express();
 
 //middleware
+// secure HTTP headers
+app.use(helmet());
+
+// limit rate request from same api
 const limiter = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
@@ -18,10 +23,14 @@ const limiter = rateLimit({
 app.use("/api", limiter);
 
 app.use(morgan("dev"));
+
+// body parser, reading data from body into req.body
 app.use(express.json());
 
+// serving static files
 app.use(express.static(`${__dirname}/public`));
 
+// test middleware
 app.use((req, res, next) => {
   console.log("Hello from the Middleware");
   next();
