@@ -10,11 +10,14 @@ const {
 } = require("./../controllers/tourController");
 const { protect } = require("./../controllers/authController");
 const { restrictTo } = require("./../controllers/authController");
+const reviewRouter = require("./../routes/reviewRoutes");
 
 const router = express.Router();
 
 //param middleware
 //router.param("id", checkID);
+
+router.use("/:tourId/reviews", reviewRouter);
 
 // alias route - we use middleware function first b4 we call the get all tours function
 router.route("/top-5-cheap").get(aliasTopFiveTours, getAllTours);
