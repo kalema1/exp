@@ -79,6 +79,8 @@ const tourSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+tourSchema.index({ startLocation: "2dsphere" });
+
 // virtual populate
 tourSchema.virtual("reviews", {
   ref: "Review",

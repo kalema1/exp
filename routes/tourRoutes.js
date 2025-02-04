@@ -7,6 +7,7 @@ const {
   deleteTour,
   aliasTopFiveTours,
   getTourStats,
+  getToursWithIn,
 } = require("./../controllers/tourController");
 const { protect } = require("./../controllers/authController");
 const { restrictTo } = require("./../controllers/authController");
@@ -34,5 +35,9 @@ router
   .get(getTour)
   .patch(protect, restrictTo("admin", "lead-guide"), updateTour)
   .delete(protect, restrictTo("admin", "lead-guide"), deleteTour);
+
+router
+  .route("/tours-within/:distance/center/:latlng/unit/:unit")
+  .get(getToursWithIn);
 
 module.exports = router;
