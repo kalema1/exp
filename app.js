@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
+const compression = reqire("compression");
 
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
@@ -30,6 +31,8 @@ app.use(express.json());
 
 // serving static files
 app.use(express.static(`${__dirname}/public`));
+
+app.use(compression());
 
 // test middleware
 app.use((req, res, next) => {
