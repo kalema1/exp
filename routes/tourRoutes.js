@@ -27,7 +27,7 @@ router.route("/tour-stats").get(getTourStats);
 
 router
   .route("/")
-  .get(protect, getAllTours)
+  .get(getAllTours)
   .post(protect, restrictTo("admin", "lead-guide"), createTour);
 
 router
